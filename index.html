@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acacia Climbing Coalition — Crag Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<style>
+  :root {
+    --forest:    #2D5016;
+    --green:     #3A6B1E;
+    --bright:    #5AAA3A;
+    --gold:      #E8C020;
+    --gold-d:    #C8900A;
+    --ink:       #111110;
+    --ink-soft:  #3A3A36;
+    --muted:     rgba(17,17,16,0.45);
+    --cream:     #F7F6F3;
+    --white:     #FFFFFF;
+    --rule:      rgba(17,17,16,0.08);
+    --amber:     #C8900A;
+    --amber-bg:  #FAEEDA;
+    --done-bg:   #EAF3DE;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Josefin Sans',sans-serif;
+    font-weight:300;
+    background:var(--cream);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background:var(--forest);
+    border-bottom:3px solid var(--gold);
+    padding:16px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-shrink:0;
+  }
+  .header-logo { display:flex; align-items:center; gap:14px; }
+  .header-name { display:flex; flex-direction:column; gap:2px; }
+  .header-name-main {
+    font-family:'Playfair Display',serif;
+    font-size:18px; font-weight:700;
+    color:var(--white);
+  }
+  .header-name-sub {
+    font-size:9px; font-weight:300;
+    letter-spacing:4px; text-transform:uppercase;
+    color:rgba(255,255,255,0.4);
+  }
+  .header-updated {
+    font-size:9px; letter-spacing:2px;
+    color:rgba(255,255,255,0.3);
+    text-transform:uppercase;
+  }
+
+  /* ── LAYOUT ── */
+  .main {
+    display:grid;
+    grid-template-columns:360px 1fr;
+    flex:1;
+    height:calc(100vh - 62px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background:var(--white);
+    border-right:1px solid var(--rule);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .sidebar-top {
+    padding:22px 24px 18px;
+    border-bottom:1px solid var(--rule);
+    flex-shrink:0;
+  }
+  .sidebar-eyebrow {
+    font-size:9px; font-weight:600;
+    letter-spacing:4px; text-transform:uppercase;
+    color:var(--bright); margin-bottom:6px;
+  }
+  .sidebar-title {
+    font-family:'Playfair Display',serif;
+    font-size:20px; font-weight:700;
+    color:var(--ink); margin-bottom:8px; line-height:1.2;
+  }
+  .sidebar-intro { font-size:12px; color:var(--muted); line-height:1.65; }
+
+  /* ── CRAG LIST ── */
+  .crag-list { flex:1; overflow-y:auto; padding:8px 0; }
+
+  .crag-item {
+    padding:15px 24px;
+    border-bottom:1px solid var(--rule);
+    cursor:pointer;
+    transition:background 0.15s;
+  }
+  .crag-item:hover { background:var(--cream); }
+  .crag-item.active { background:var(--forest); }
+  .crag-item.active .crag-name { color:var(--white); }
+  .crag-item.active .crag-meta { color:rgba(255,255,255,0.45); }
+  .crag-item.active .crag-status-label { color:rgba(255,255,255,0.55); }
+
+  .crag-item-top {
+    display:flex; align-items:flex-start;
+    justify-content:space-between; gap:8px; margin-bottom:5px;
+  }
+  .crag-name {
+    font-family:'Playfair Display',serif;
+    font-size:16px; font-weight:700; color:var(--ink); line-height:1.2;
+  }
+  .crag-badge {
+    font-size:8px; font-weight:600;
+    letter-spacing:2px; text-transform:uppercase;
+    padding:4px 10px; border-radius:2px; flex-shrink:0; margin-top:2px;
+  }
+  .badge-active   { background:var(--done-bg);  color:var(--forest); }
+  .badge-progress { background:var(--amber-bg); color:var(--amber); }
+  .badge-scoping  { background:rgba(17,17,16,0.06); color:var(--muted); }
+
+  .crag-meta { font-size:11px; color:var(--muted); margin-bottom:7px; }
+  .crag-status-row { display:flex; gap:14px; flex-wrap:wrap; }
+  .crag-status-item { display:flex; align-items:center; gap:5px; }
+  .status-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .dot-done     { background:var(--bright); }
+  .dot-progress { background:var(--amber); animation:pulse 2s ease-in-out infinite; }
+  .dot-scoping  { background:#B4B2A9; }
+  .crag-status-label { font-size:10px; color:var(--muted); }
+
+  /* ── DETAIL PANEL ── */
+  .detail-panel { display:none; flex-direction:column; flex:1; overflow-y:auto; }
+  .detail-panel.visible { display:flex; }
+
+  .detail-back {
+    padding:13px 24px;
+    border-bottom:1px solid var(--rule);
+    display:flex; align-items:center; gap:8px;
+    cursor:pointer; background:var(--cream); flex-shrink:0;
+    transition:background 0.15s;
+  }
+  .detail-back:hover { background:#EDEAE3; }
+  .detail-back-label {
+    font-size:10px; font-weight:600;
+    letter-spacing:3px; text-transform:uppercase; color:var(--forest);
+  }
+
+  .detail-content { padding:22px; flex:1; }
+  .detail-status-pill {
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:9px; font-weight:600; letter-spacing:3px;
+    text-transform:uppercase; padding:5px 12px;
+    border-radius:2px; margin-bottom:12px;
+  }
+  .detail-name {
+    font-family:'Playfair Display',serif;
+    font-size:24px; font-weight:700; color:var(--ink);
+    margin-bottom:3px; line-height:1.15;
+  }
+  .detail-location { font-size:11px; color:var(--muted); letter-spacing:1px; margin-bottom:18px; }
+
+  .detail-section { margin-bottom:18px; }
+  .detail-section-label {
+    font-size:9px; font-weight:600; letter-spacing:4px;
+    text-transform:uppercase; color:var(--muted);
+    margin-bottom:8px; padding-bottom:6px;
+    border-bottom:1px solid var(--rule);
+  }
+  .detail-desc { font-size:12.5px; line-height:1.7; color:var(--ink-soft); }
+
+  .stat-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+  .stat-card { background:var(--cream); padding:12px 14px; border:1px solid var(--rule); }
+  .stat-num {
+    font-family:'Playfair Display',serif;
+    font-size:22px; font-weight:700; color:var(--forest);
+    line-height:1; margin-bottom:4px;
+  }
+  .stat-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+
+  .progress-label-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
+  .progress-label { font-size:10px; color:var(--ink-soft); }
+  .progress-pct { font-size:11px; font-weight:600; color:var(--forest); }
+  .progress-bar-bg { height:5px; background:rgba(17,17,16,0.07); border-radius:3px; overflow:hidden; margin-bottom:14px; }
+  .progress-bar-fill { height:100%; border-radius:3px; transition:width 0.6s ease; }
+
+  .council-badge {
+    display:inline-flex; align-items:center; gap:10px;
+    padding:10px 14px; border:1px solid var(--rule);
+    background:var(--cream); margin-bottom:14px; width:100%;
+  }
+  .council-badge-name { font-size:11px; font-weight:600; color:var(--ink); }
+  .council-badge-status { font-size:10px; color:var(--muted); }
+
+  .milestones { list-style:none; }
+  .milestone {
+    display:flex; align-items:flex-start; gap:10px;
+    padding:7px 0; border-bottom:1px solid var(--rule);
+  }
+  .milestone:last-child { border-bottom:none; }
+  .m-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+  .m-dot-done     { background:var(--bright); }
+  .m-dot-progress { background:var(--amber); animation:pulse 2s ease-in-out infinite; }
+  .m-dot-todo     { background:transparent; border:1.5px solid #B4B2A9; }
+  .m-text { font-size:12px; line-height:1.5; }
+  .m-text-done     { color:var(--muted); }
+  .m-text-progress { color:var(--ink-soft); }
+  .m-text-todo     { color:#B4B2A9; }
+
+  /* ── LOADING STATE ── */
+  .loading {
+    display:flex; align-items:center; justify-content:center;
+    flex:1; flex-direction:column; gap:12px; color:var(--muted);
+  }
+  .loading-spinner {
+    width:24px; height:24px; border-radius:50%;
+    border:2px solid var(--rule);
+    border-top-color:var(--forest);
+    animation:spin 0.8s linear infinite;
+  }
+  .loading-text { font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+
+  /* ── MAP ── */
+  #map { width:100%; height:100%; z-index:1; }
+
+  .leaflet-popup-content-wrapper {
+    border-radius:2px !important;
+    box-shadow:0 4px 24px rgba(0,0,0,0.15) !important;
+    font-family:'Josefin Sans',sans-serif !important;
+    padding:0 !important;
+  }
+  .leaflet-popup-content { margin:0 !important; }
+  .leaflet-popup-tip-container { display:none; }
+  .leaflet-popup-close-button { color:var(--muted) !important; top:8px !important; right:8px !important; }
+
+  .map-popup { padding:16px 20px 14px; min-width:200px; }
+  .map-popup-name { font-family:'Playfair Display',serif; font-size:16px; font-weight:700; color:var(--ink); margin-bottom:3px; }
+  .map-popup-loc { font-size:10px; color:var(--muted); letter-spacing:1px; margin-bottom:10px; }
+  .map-popup-status {
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:9px; font-weight:600; letter-spacing:2px;
+    text-transform:uppercase; padding:5px 10px;
+    border-radius:2px; margin-bottom:10px;
+  }
+  .map-popup-hint {
+    display:block; font-size:10px; color:var(--forest);
+    cursor:pointer; text-decoration:underline; text-underline-offset:3px;
+  }
+  .map-popup-hint:hover { color:var(--green); }
+
+  .map-legend {
+    position:absolute; bottom:28px; right:12px; z-index:1000;
+    background:white; border:1px solid var(--rule);
+    padding:12px 16px; box-shadow:0 2px 16px rgba(0,0,0,0.1);
+  }
+  .legend-title {
+    font-size:8px; font-weight:600; letter-spacing:3px;
+    text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  .legend-item { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  .legend-item:last-child { margin-bottom:0; }
+  .legend-dot {
+    width:10px; height:10px; border-radius:50%;
+    border:2px solid white; box-shadow:0 1px 4px rgba(0,0,0,0.2); flex-shrink:0;
+  }
+  .legend-label { font-size:10px; color:var(--ink-soft); }
+
+  /* ── ERROR STATE ── */
+  .error-msg {
+    display:flex; align-items:center; justify-content:center;
+    flex:1; flex-direction:column; gap:8px; padding:24px;
+    text-align:center;
+  }
+  .error-msg p { font-size:13px; color:var(--muted); line-height:1.6; }
+
+  @keyframes pulse {
+    0%,100%{ opacity:1; transform:scale(1); }
+    50%{ opacity:0.6; transform:scale(1.2); }
+  }
+  @keyframes spin {
+    to { transform:rotate(360deg); }
+  }
+
+  @media(max-width:700px){
+    .main { grid-template-columns:1fr; grid-template-rows:45vh 1fr; height:auto; }
+    #map { min-height:45vh; }
+    .sidebar { height:55vh; }
+    .site-header { padding:12px 20px; }
+    .header-name-main { font-size:15px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-logo">
+    <svg width="34" height="34" viewBox="0 0 200 200" fill="none">
+      <rect x="3" y="3" width="194" height="194" fill="none" stroke="white" stroke-width="10"/>
+      <path d="M20 172 Q38 150 58 128 Q78 106 102 84 Q124 64 158 44" stroke="white" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <path d="M34 158 Q22 146 16 132" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M34 158 Q42 144 46 130" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M60 126 Q48 114 44 100" stroke="white" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <path d="M60 126 Q70 112 74 98" stroke="white" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <path d="M88 98 Q76 86 74 72" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M88 98 Q100 84 106 70" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="14" cy="130" r="16" fill="#E8C020"/>
+      <circle cx="44" cy="128" r="14" fill="#F0CC00"/>
+      <circle cx="42" cy="98" r="14" fill="#E8C020"/>
+      <circle cx="74" cy="96" r="13" fill="#F0CC00"/>
+      <circle cx="72" cy="70" r="12" fill="#E8C020"/>
+      <circle cx="106" cy="68" r="11" fill="#F0CC00"/>
+    </svg>
+    <div class="header-name">
+      <div class="header-name-main">Acacia Climbing Coalition</div>
+      <div class="header-name-sub">Southeast Queensland · Crag Access Map</div>
+    </div>
+  </div>
+  <div class="header-updated" id="headerUpdated"></div>
+</header>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-eyebrow">Live Map</div>
+      <div class="sidebar-title">Southeast Queensland Bouldering</div>
+      <div class="sidebar-intro">Select a crag to see access status, council progress, and guidebook updates. Data updates live from our records.</div>
+    </div>
+
+    <!-- Loading state -->
+    <div class="loading" id="loadingState">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Loading crags</div>
+    </div>
+
+    <!-- Crag list — populated by JS -->
+    <div class="crag-list" id="cragList" style="display:none;"></div>
+
+    <!-- Detail panel -->
+    <div class="detail-panel" id="detailPanel">
+      <div class="detail-back" onclick="closeDetail()">
+        <span style="font-size:14px;color:var(--forest);">←</span>
+        <span class="detail-back-label">All Crags</span>
+      </div>
+      <div class="detail-content" id="detailContent"></div>
+    </div>
+
+    <!-- Error state -->
+    <div class="error-msg" id="errorState" style="display:none;">
+      <p>Could not load crag data.<br>Check your internet connection or try refreshing.</p>
+    </div>
+  </div>
+
+  <div style="position:relative;flex:1;">
+    <div id="map"></div>
+    <div class="map-legend">
+      <div class="legend-title">Status</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2D5016;"></div><div class="legend-label">Council recognised</div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#C8900A;"></div><div class="legend-label">In progress</div></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#888780;"></div><div class="legend-label">Scoping</div></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// ── CONFIG — update this URL after GitHub setup ───────────────
+// Replace YOUR-USERNAME with your GitHub username
+// Replace YOUR-REPO with your repository name (e.g. acc-crag-map)
+const DATA_URL = 'https://YOUR-USERNAME.github.io/YOUR-REPO/crags.json';
+
+// ── STATUS CONFIG ────────────────────────────────────────────
+const STATUS = {
+  active:   { bg:'#2D5016', text:'#EAF3DE', dot:'#5AAA3A', badge:'badge-active',   label:'Council Recognised' },
+  progress: { bg:'#C8900A', text:'#FAEEDA', dot:'#C8900A', badge:'badge-progress', label:'In Progress' },
+  scoping:  { bg:'#888780', text:'#F1EFE8', dot:'#888780', badge:'badge-scoping',  label:'Scoping' }
+};
+
+// ── MAP INIT ─────────────────────────────────────────────────
+const map = L.map('map', { center:[-27.5, 152.82], zoom:10, zoomControl:true });
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains:'abcd', maxZoom:19
+}).addTo(map);
+
+// ── STATE ────────────────────────────────────────────────────
+let crags = [];
+let markers = {};
+let activeCrag = null;
+
+// ── FETCH DATA ───────────────────────────────────────────────
+async function loadData() {
+  try {
+    // Add cache-busting so updates show immediately
+    const res = await fetch(DATA_URL + '?v=' + Date.now());
+    if (!res.ok) throw new Error('Failed to fetch');
+    const data = await res.json();
+    crags = data.crags;
+
+    // Show last updated in header
+    if (data.lastUpdated) {
+      document.getElementById('headerUpdated').textContent =
+        'Updated ' + data.lastUpdated;
+    }
+
+    renderCragList();
+    renderMarkers();
+
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('cragList').style.display = 'block';
+
+  } catch (err) {
+    console.error('Error loading crag data:', err);
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('errorState').style.display = 'flex';
+  }
+}
+
+// ── RENDER CRAG LIST ─────────────────────────────────────────
+function renderCragList() {
+  const list = document.getElementById('cragList');
+  list.innerHTML = crags.map(crag => {
+    const s = STATUS[crag.status] || STATUS.scoping;
+    const progressDot = crag.milestones.some(m => m.status === 'progress') ?
+      `<div class="crag-status-item"><div class="status-dot dot-progress"></div><div class="crag-status-label">In progress</div></div>` : '';
+    const doneDot = crag.milestones.some(m => m.status === 'done') ?
+      `<div class="crag-status-item"><div class="status-dot dot-done"></div><div class="crag-status-label">${crag.milestones.filter(m=>m.status==='done').length} milestones complete</div></div>` : '';
+    return `
+      <div class="crag-item" data-crag="${crag.id}" onclick="selectCrag('${crag.id}')">
+        <div class="crag-item-top">
+          <div class="crag-name">${crag.name}</div>
+          <div class="crag-badge ${s.badge}">${crag.statusLabel}</div>
+        </div>
+        <div class="crag-meta">${crag.council} · ${crag.subtitle.split('·')[0].trim()}</div>
+        <div class="crag-status-row">${doneDot}${progressDot}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── RENDER MARKERS ───────────────────────────────────────────
+function markerIcon(crag, active) {
+  const s = STATUS[crag.status] || STATUS.scoping;
+  const size = crag.status === 'active' ? 28 : crag.status === 'progress' ? 26 : 22;
+  const scale = active ? 1.3 : 1;
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:${size}px;height:${size}px;background:${s.bg};border-radius:50%;border:3px solid white;box-shadow:0 2px 12px rgba(0,0,0,${active?0.4:0.25});transform:scale(${scale});transition:transform 0.15s;cursor:pointer;"></div>`,
+    iconSize: [size, size],
+    iconAnchor: [size/2, size/2]
+  });
+}
+
+function renderMarkers() {
+  crags.forEach(crag => {
+    const s = STATUS[crag.status] || STATUS.scoping;
+    const marker = L.marker([crag.lat, crag.lng], { icon: markerIcon(crag, false) }).addTo(map);
+
+    marker.bindPopup(`
+      <div class="map-popup">
+        <div class="map-popup-name">${crag.name}</div>
+        <div class="map-popup-loc">${crag.subtitle}</div>
+        <div class="map-popup-status" style="background:${s.text};color:${s.bg};">
+          <div style="width:6px;height:6px;border-radius:50%;background:${s.bg};"></div>
+          ${crag.statusLabel}
+        </div><br>
+        <span class="map-popup-hint" onclick="selectCrag('${crag.id}')">View full details →</span>
+      </div>`, { maxWidth:260 });
+
+    marker.on('click', () => selectCrag(crag.id));
+    markers[crag.id] = marker;
+  });
+}
+
+// ── SELECT CRAG ──────────────────────────────────────────────
+function selectCrag(id) {
+  const crag = crags.find(c => c.id === id);
+  if (!crag) return;
+
+  document.querySelectorAll('.crag-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.crag === id);
+  });
+  Object.entries(markers).forEach(([k, m]) => {
+    m.setIcon(markerIcon(crags.find(c=>c.id===k), k===id));
+  });
+
+  map.flyTo([crag.lat, crag.lng], 12, { duration:0.8 });
+  renderDetail(crag);
+  activeCrag = id;
+}
+
+function renderDetail(crag) {
+  const s = STATUS[crag.status] || STATUS.scoping;
+  const doneCount = crag.milestones.filter(m => m.status === 'done').length;
+
+  const milestones = crag.milestones.map(m => {
+    const dotClass = m.status === 'done' ? 'm-dot-done' : m.status === 'progress' ? 'm-dot-progress' : 'm-dot-todo';
+    const textClass = m.status === 'done' ? 'm-text-done' : m.status === 'progress' ? 'm-text-progress' : 'm-text-todo';
+    return `<li class="milestone">
+      <div class="m-dot ${dotClass}"></div>
+      <div class="m-text ${textClass}">${m.text}</div>
+    </li>`;
+  }).join('');
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-status-pill" style="background:${s.text};color:${s.bg};">
+      <div style="width:6px;height:6px;border-radius:50%;background:${s.bg};"></div>
+      ${crag.statusLabel}
+    </div>
+    <div class="detail-name">${crag.name}</div>
+    <div class="detail-location">${crag.subtitle}</div>
+
+    <div class="detail-section">
+      <div class="detail-section-label">Overview</div>
+      <div class="detail-desc">${crag.description}</div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-num">${crag.problems}</div>
+        <div class="stat-label">Problems</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${doneCount}/${crag.milestones.length}</div>
+        <div class="stat-label">Milestones done</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-label">Council</div>
+      <div class="council-badge">
+        <div style="width:8px;height:8px;border-radius:50%;background:${s.bg};flex-shrink:0;"></div>
+        <div>
+          <div class="council-badge-name">${crag.council}</div>
+          <div class="council-badge-status">${crag.councilStatus}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-label">Progress</div>
+      <div class="progress-label-row">
+        <span class="progress-label">Overall access & documentation</span>
+        <span class="progress-pct">${crag.progress}%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width:${crag.progress}%;background:${s.bg};"></div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-label">Milestones</div>
+      <ul class="milestones">${milestones}</ul>
+    </div>
+
+    <div style="margin-top:12px;padding:12px 14px;background:var(--cream);border:1px solid var(--rule);font-size:11px;color:var(--muted);">
+      <strong style="color:var(--ink-soft);font-weight:600;">Style:</strong> ${crag.style}<br>
+      <strong style="color:var(--ink-soft);font-weight:600;">Best season:</strong> ${crag.season}
+    </div>
+  `;
+
+  document.getElementById('cragList').style.display = 'none';
+  document.getElementById('detailPanel').classList.add('visible');
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('visible');
+  document.getElementById('cragList').style.display = 'block';
+  document.querySelectorAll('.crag-item').forEach(el => el.classList.remove('active'));
+  Object.entries(markers).forEach(([k,m]) => {
+    m.setIcon(markerIcon(crags.find(c=>c.id===k), false));
+  });
+  map.flyTo([-27.5, 152.82], 10, { duration:0.8 });
+  activeCrag = null;
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>
