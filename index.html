@@ -50,6 +50,12 @@
   /* ── MAIN ── */
   .main { display:grid; grid-template-columns:340px 1fr; height:calc(100vh - 62px); }
 
+  /* ── CRAG LIST — always vertical stack ── */
+  .crag-item, .state-item {
+    width: 100%;
+    display: block;
+  }
+
   /* ── SIDEBAR ── */
   .sidebar {
     background:var(--white); border-right:1px solid var(--rule);
@@ -63,8 +69,8 @@
   .sidebar-intro { font-size:11.5px; color:var(--muted); line-height:1.65; }
 
   /* ── LIST VIEWS ── */
-  .list-view { flex:1; overflow-y:auto; display:none; }
-  .list-view.visible { display:block; }
+  .list-view { flex:1; overflow-y:auto; display:none; flex-direction:column; }
+  .list-view.visible { display:flex; flex-direction:column; overflow-y:auto; }
 
   /* State list items */
   .state-item {
@@ -489,11 +495,11 @@ function renderStatePolygons(geojson) {
       const cfg = getStateConfig(stateId);
       const isActive = cfg ? cfg.active : false;
       return {
-        color:       isActive ? '#2D5016' : '#888780',
-        weight:      isActive ? 2         : 1.5,
-        opacity:     isActive ? 0.7       : 0.4,
-        fillColor:   isActive ? '#2D5016' : '#888780',
-        fillOpacity: isActive ? 0.08      : 0.04,
+        color:       isActive ? '#2D5016' : '#444441',
+        weight:      isActive ? 2.5       : 1.5,
+        opacity:     isActive ? 0.8       : 0.65,
+        fillColor:   isActive ? '#2D5016' : '#444441',
+        fillOpacity: isActive ? 0.10      : 0.12,
       };
     },
     onEachFeature: function(feature, layer) {
@@ -506,11 +512,11 @@ function renderStatePolygons(geojson) {
       statePolygons[cfg.id] = layer;
 
       layer.on('mouseover', function() {
-        this.setStyle({ fillOpacity: cfg.active ? 0.18 : 0.10, weight: cfg.active ? 2.5 : 2 });
+        this.setStyle({ fillOpacity: cfg.active ? 0.22 : 0.22, weight: cfg.active ? 3 : 2 });
         this.getElement().style.cursor = 'pointer';
       });
       layer.on('mouseout', function() {
-        this.setStyle({ fillOpacity: cfg.active ? 0.08 : 0.04, weight: cfg.active ? 2 : 1.5 });
+        this.setStyle({ fillOpacity: cfg.active ? 0.10 : 0.12, weight: cfg.active ? 2.5 : 1.5 });
       });
 
       const popupContent = `
@@ -543,11 +549,11 @@ fetch('states.geojson')
       if (!state.poly) return;
       const isActive = state.active;
       const poly = L.polygon(state.poly, {
-        color: isActive ? '#2D5016' : '#888780',
-        weight: isActive ? 2 : 1.5,
-        opacity: isActive ? 0.7 : 0.4,
-        fillColor: isActive ? '#2D5016' : '#888780',
-        fillOpacity: isActive ? 0.08 : 0.04,
+        color: isActive ? '#2D5016' : '#444441',
+        weight: isActive ? 2.5 : 1.5,
+        opacity: isActive ? 0.8 : 0.65,
+        fillColor: isActive ? '#2D5016' : '#444441',
+        fillOpacity: isActive ? 0.10 : 0.12,
       }).addTo(map);
       const popupContent = `
         <div class="state-popup">
@@ -644,7 +650,38 @@ async function loadData() {
 
 /* ════════════════════════════════════════════════════════════
    CRAG MARKERS — hidden at Australia view, shown on QLD
+   Also auto-show on zoom >= 7 without requiring state click
 ════════════════════════════════════════════════════════════ */
+
+// Zoom threshold at which crag markers auto-appear
+const CRAG_ZOOM_THRESHOLD = 7;
+
+map.on('zoom', function() {
+  const z = map.getZoom();
+  if (z >= CRAG_ZOOM_THRESHOLD) {
+    if (!map.hasLayer(cragMarkerLayer)) {
+      cragMarkerLayer.addTo(map);
+    }
+    // If no state is selected yet, auto-select QLD when zoomed in
+    if (!currentState) {
+      const center = map.getCenter();
+      // Find which state polygon contains the map center
+      STATES.forEach(s => {
+        const p = statePolygons[s.id];
+        if (p && s.active) {
+          // Show markers but don't change sidebar unless user clicks
+        }
+      });
+    }
+  } else {
+    // Only hide markers if we're back at Australia overview level
+    if (!currentState || !currentState.active) {
+      if (map.hasLayer(cragMarkerLayer)) {
+        map.removeLayer(cragMarkerLayer);
+      }
+    }
+  }
+});
 function markerIcon(crag, active=false) {
   const cfg = STATUS[crag.status] || STATUS.scoping;
   const s = cfg.size;
