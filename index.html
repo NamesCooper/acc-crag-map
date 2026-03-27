@@ -458,53 +458,111 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
 }).addTo(map);
 
 /* ════════════════════════════════════════════════════════════
-   STATE — POLYGON LAYERS
+   STATE — POLYGON LAYERS (from states.geojson in repo)
+   
+   states.geojson maps these name properties to state IDs:
+   "Queensland" → QLD, "New South Wales" → NSW, etc.
 ════════════════════════════════════════════════════════════ */
 const statePolygons = {};
 
-STATES.forEach(state => {
-  const isActive = state.active;
-  const poly = L.polygon(state.poly, {
-    color:       isActive ? '#2D5016'              : '#888780',
-    weight:      isActive ? 2                      : 1.5,
-    opacity:     isActive ? 0.7                    : 0.4,
-    fillColor:   isActive ? '#2D5016'              : '#888780',
-    fillOpacity: isActive ? 0.08                   : 0.04,
-    interactive: true,
+const STATE_NAME_MAP = {
+  'Queensland':            'QLD',
+  'New South Wales':       'NSW',
+  'Victoria':              'VIC',
+  'South Australia':       'SA',
+  'Western Australia':     'WA',
+  'Tasmania':              'TAS',
+  'Northern Territory':    'NT',
+  'Australian Capital Territory': 'ACT',
+};
+
+function getStateConfig(stateId) {
+  return STATES.find(s => s.id === stateId);
+}
+
+function renderStatePolygons(geojson) {
+  L.geoJSON(geojson, {
+    style: function(feature) {
+      const stateId = STATE_NAME_MAP[feature.properties.STATE_NAME] || 
+                      STATE_NAME_MAP[feature.properties.name] ||
+                      STATE_NAME_MAP[feature.properties.NAME];
+      const cfg = getStateConfig(stateId);
+      const isActive = cfg ? cfg.active : false;
+      return {
+        color:       isActive ? '#2D5016' : '#888780',
+        weight:      isActive ? 2         : 1.5,
+        opacity:     isActive ? 0.7       : 0.4,
+        fillColor:   isActive ? '#2D5016' : '#888780',
+        fillOpacity: isActive ? 0.08      : 0.04,
+      };
+    },
+    onEachFeature: function(feature, layer) {
+      const stateId = STATE_NAME_MAP[feature.properties.STATE_NAME] ||
+                      STATE_NAME_MAP[feature.properties.name] ||
+                      STATE_NAME_MAP[feature.properties.NAME];
+      const cfg = getStateConfig(stateId);
+      if (!cfg) return;
+
+      statePolygons[cfg.id] = layer;
+
+      layer.on('mouseover', function() {
+        this.setStyle({ fillOpacity: cfg.active ? 0.18 : 0.10, weight: cfg.active ? 2.5 : 2 });
+        this.getElement().style.cursor = 'pointer';
+      });
+      layer.on('mouseout', function() {
+        this.setStyle({ fillOpacity: cfg.active ? 0.08 : 0.04, weight: cfg.active ? 2 : 1.5 });
+      });
+
+      const popupContent = `
+        <div class="state-popup">
+          <div class="state-popup-name">${cfg.name}</div>
+          <div class="state-popup-meta">${cfg.meta}</div>
+          ${cfg.active
+            ? `<span class="state-popup-link" onclick="selectState('${cfg.id}')">View crags →</span>`
+            : `<span class="state-popup-soon">Coming soon — ACC is expanding nationally</span>`
+          }
+        </div>`;
+
+      layer.bindPopup(popupContent, { maxWidth:220 });
+      layer.on('click', function() {
+        this.openPopup();
+        selectState(cfg.id);
+      });
+    }
   }).addTo(map);
+}
 
-  poly.on('mouseover', function() {
-    this.setStyle({
-      fillOpacity: isActive ? 0.18 : 0.1,
-      weight: isActive ? 2.5 : 2,
+// Fetch real state boundaries from repo
+fetch('states.geojson')
+  .then(r => r.json())
+  .then(geojson => renderStatePolygons(geojson))
+  .catch(err => {
+    console.warn('Could not load states.geojson — falling back to simplified polygons', err);
+    // Fallback: draw simplified polygons from STATES config
+    STATES.forEach(state => {
+      if (!state.poly) return;
+      const isActive = state.active;
+      const poly = L.polygon(state.poly, {
+        color: isActive ? '#2D5016' : '#888780',
+        weight: isActive ? 2 : 1.5,
+        opacity: isActive ? 0.7 : 0.4,
+        fillColor: isActive ? '#2D5016' : '#888780',
+        fillOpacity: isActive ? 0.08 : 0.04,
+      }).addTo(map);
+      const popupContent = `
+        <div class="state-popup">
+          <div class="state-popup-name">${state.name}</div>
+          <div class="state-popup-meta">${state.meta}</div>
+          ${isActive
+            ? `<span class="state-popup-link" onclick="selectState('${state.id}')">View crags →</span>`
+            : `<span class="state-popup-soon">Coming soon — ACC is expanding nationally</span>`
+          }
+        </div>`;
+      poly.bindPopup(popupContent, { maxWidth:220 });
+      poly.on('click', () => { poly.openPopup(); selectState(state.id); });
+      statePolygons[state.id] = poly;
     });
-    this.getElement().style.cursor = 'pointer';
   });
-  poly.on('mouseout', function() {
-    this.setStyle({
-      fillOpacity: isActive ? 0.08 : 0.04,
-      weight: isActive ? 2 : 1.5,
-    });
-  });
-
-  const popupContent = `
-    <div class="state-popup">
-      <div class="state-popup-name">${state.name}</div>
-      <div class="state-popup-meta">${state.meta}</div>
-      ${isActive
-        ? `<span class="state-popup-link" onclick="selectState('${state.id}')">View crags →</span>`
-        : `<span class="state-popup-soon">Coming soon — ACC is expanding nationally</span>`
-      }
-    </div>`;
-
-  poly.bindPopup(popupContent, { maxWidth:220 });
-  poly.on('click', () => {
-    poly.openPopup();
-    selectState(state.id);
-  });
-
-  statePolygons[state.id] = poly;
-});
 
 /* ════════════════════════════════════════════════════════════
    CRAG DATA — CSV PARSER + FETCH
@@ -635,7 +693,7 @@ function showOnly(viewId) {
   ['loadingView','australiaView','stateView','comingSoon','detailPanel'].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
-      el.style.display = '';
+      el.style.display = 'none';
       el.classList.remove('visible');
     }
   });
@@ -695,7 +753,7 @@ function selectState(stateId) {
     if (s.id === stateId) {
       p.setStyle({ fillOpacity: s.active ? 0.18 : 0.12, weight: s.active ? 2.5 : 2 });
     } else {
-      p.setStyle({ fillOpacity: s.active ? 0.04 : 0.02, weight: s.active ? 1.5 : 1 });
+      p.setStyle({ fillOpacity: s.active ? 0.05 : 0.02, weight: s.active ? 1.5 : 1 });
     }
   });
 
