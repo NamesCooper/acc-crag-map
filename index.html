@@ -533,8 +533,8 @@ function parseCSV(text) {
 async function loadData() {
   try {
     const [cr, mr] = await Promise.all([
-      fetch(SHEETS.crags      + '&t=' + Date.now()).then(r => r.text()),
-      fetch(SHEETS.milestones + '&t=' + Date.now()).then(r => r.text()),
+      fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(SHEETS.crags)).then(r => r.text()),
+      fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(SHEETS.milestones)).then(r => r.text()),
     ]);
     allCrags      = parseCSV(cr).map(c => ({...c, lat:parseFloat(c.lat), lng:parseFloat(c.lng), progress:parseInt(c.progress)||0}));
     allMilestones = parseCSV(mr);
