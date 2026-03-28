@@ -466,7 +466,7 @@ body {
   font-size: 12px;
   color: rgba(17, 17, 16, 0.45);
   letter-spacing: 1px;
-  margin-bottom: 16px;
+  margin-bottom: 4px;
 }
 
 .detail-section {
@@ -537,7 +537,8 @@ body {
 
 .detail-council {
   font-size: 15px;
-  color: #3A3A36;
+  color: rgba(17, 17, 16, 0.45);
+  margin-bottom: 16px;
 }
 
 .milestones {

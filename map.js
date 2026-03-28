@@ -388,6 +388,7 @@ function selectCrag(id) {
     </div>
     <div class="detail-name">${crag.name}</div>
     <div class="detail-location">${crag.subtitle}</div>
+    <div class="detail-council">${crag.council}</div>
     <div class="detail-section">
       <div class="detail-section-label">Overview</div>
       <div class="detail-desc">${crag.description || 'No description added yet.'}</div>
@@ -395,10 +396,6 @@ function selectCrag(id) {
     <div class="stat-row">
       <div class="stat-card"><div class="stat-num">${crag.problems || '—'}</div><div class="stat-label">Problems</div></div>
       <div class="stat-card"><div class="stat-num">${doneCount}/${milestones.length}</div><div class="stat-label">Milestones done</div></div>
-    </div>
-    <div class="detail-section">
-      <div class="detail-section-label">Council</div>
-      <div class="detail-council">${crag.council}</div>
     </div>
     <div class="detail-section">
       <div class="detail-section-label">Progress — ${progress}%</div>
