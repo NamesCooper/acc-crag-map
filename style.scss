@@ -15,6 +15,9 @@ $rule:     rgba(17, 17, 16, 0.08);
 $done-bg:  #EAF3DE;
 $prog-bg:  #FAEEDA;
 
+$sidebar-width:       360px;
+$sidebar-width-wide:  400px;
+
 // ── FONTS ──
 $font-heading: 'Manrope', sans-serif;
 $font-body:    'Nunito Sans', sans-serif;
@@ -123,8 +126,14 @@ body {
 // ── MAIN ──
 .main {
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: $sidebar-width 1fr;
   height: 100vh;
+}
+
+@media (min-width: 1200px) {
+  .main {
+    grid-template-columns: $sidebar-width-wide 1fr;
+  }
 }
 
 // ── CRAG LIST — always vertical stack ──
@@ -142,40 +151,40 @@ body {
   overflow: hidden;
 
   &-top {
-    padding: 20px 22px 16px;
+    padding: 22px 24px 18px;
     border-bottom: 1px solid $rule;
     flex-shrink: 0;
   }
 
   &-eyebrow {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: 4px;
     text-transform: uppercase;
     color: $bright;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
   }
 
   &-title {
     font-family: $font-heading;
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 22px;
+    font-weight: 800;
     color: $ink;
-    padding: 10px 0;
+    padding: 8px 0 6px;
     line-height: 1.2;
   }
 
   &-intro {
-    font-size: 16px;
+    font-size: 13px;
     color: $muted;
-    line-height: 1.65;
+    line-height: 1.7;
   }
 
   &-nav {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 22px;
+    padding: 10px 24px;
     border-bottom: 1px solid $rule;
     cursor: pointer;
     flex-shrink: 0;
@@ -216,7 +225,7 @@ body {
 
 // ── STATE ITEMS ──
 .state-item {
-  padding: 20px 22px;
+  padding: 16px 24px;
   border-bottom: 1px solid $rule;
   cursor: pointer;
   transition: background 0.15s;
@@ -247,7 +256,7 @@ body {
 
 .state-name {
   font-family: $font-heading;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: $ink;
 }
@@ -286,7 +295,7 @@ body {
 
 // ── CRAG ITEMS ──
 .crag-item {
-  padding: 14px 22px;
+  padding: 14px 24px;
   border-bottom: 1px solid $rule;
   cursor: pointer;
   transition: background 0.15s;
@@ -319,7 +328,7 @@ body {
 
 .crag-name {
   font-family: $font-heading;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
   color: $ink;
   line-height: 1.2;
@@ -462,7 +471,7 @@ body {
 }
 
 .detail-back {
-  padding: 12px 22px;
+  padding: 12px 24px;
   border-bottom: 1px solid $rule;
   display: flex;
   align-items: center;
@@ -486,7 +495,7 @@ body {
 }
 
 .detail-content {
-  padding: 20px 22px;
+  padding: 20px 24px 32px;
   flex: 1;
 }
 
@@ -505,18 +514,17 @@ body {
 
 .detail-name {
   font-family: $font-heading;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 26px;
+  font-weight: 800;
   color: $ink;
-  margin-bottom: 3px;
+  margin-bottom: 4px;
   line-height: 1.15;
 }
 
 .detail-location {
-  font-size: 12px;
+  font-size: 13px;
   color: $muted;
-  letter-spacing: 1px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .detail-section {
@@ -535,8 +543,8 @@ body {
 }
 
 .detail-desc {
-  font-size: 12px;
-  line-height: 1.7;
+  font-size: 13px;
+  line-height: 1.75;
   color: $ink-soft;
 }
 
@@ -632,8 +640,8 @@ body {
 }
 
 .mtext {
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.55;
 
   &-done {
     color: $muted;
@@ -817,12 +825,12 @@ body {
 }
 
 .legend-title {
-  font-size: 18px;
+  font-size: 9px;
   font-weight: 600;
-  letter-spacing: 3px;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
   color: $muted;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .legend-row {
@@ -845,7 +853,7 @@ body {
 }
 
 .legend-label {
-  font-size: 14px;
+  font-size: 12px;
   color: $ink-soft;
 }
 
@@ -892,6 +900,10 @@ body {
     height: 100vh;
   }
 
+  .sidebar-top {
+    padding: 18px 20px 14px;
+  }
+
   .sidebar {
     position: fixed;
     bottom: calc(56px + env(safe-area-inset-bottom, 0px));
@@ -908,6 +920,10 @@ body {
     &.sheet-open {
       transform: translateY(0);
     }
+  }
+
+  .detail-content {
+    padding-bottom: 48px;
   }
 
   .leaflet-bottom.leaflet-left {

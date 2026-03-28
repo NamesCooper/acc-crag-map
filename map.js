@@ -388,7 +388,6 @@ function selectCrag(id) {
     </div>
     <div class="detail-name">${crag.name}</div>
     <div class="detail-location">${crag.subtitle}</div>
-    <div class="detail-council">${crag.council}</div>
     <div class="detail-section">
       <div class="detail-section-label">Overview</div>
       <div class="detail-desc">${crag.description || 'No description added yet.'}</div>
@@ -406,6 +405,7 @@ function selectCrag(id) {
       <ul class="milestones">${milestonesHTML}</ul>
     </div>
     <div class="info-strip">
+    <strong>Council:</strong> ${crag.council || '—'}<br>
       <strong>Rock Type:</strong> ${crag.style || '—'}<br>
       <strong>Best season:</strong> ${crag.season || '—'}<br>
       <strong>Region:</strong> ${crag.region || '—'}
