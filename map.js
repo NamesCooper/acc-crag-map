@@ -283,6 +283,7 @@ function selectState(stateId) {
   const state = STATES.find(s => s.id === stateId);
   if (!state) return;
   currentState = state;
+  showMobileTab('crags');
 
   document.getElementById('sidebarEyebrow').textContent = state.name;
   document.getElementById('detailBackLabel').textContent = state.name;
@@ -353,6 +354,7 @@ function selectCrag(id) {
   if (!crag) return;
   const milestones = allMilestones.filter(m => m.crag_id === id);
   const doneCount  = milestones.filter(m => m.status === 'done').length;
+  showMobileTab('crags');
 
   // Highlight marker
   Object.entries(cragMarkers).forEach(([k,m]) =>
@@ -431,6 +433,19 @@ function updateBreadcrumb(level, state, crag) {
       <span class="breadcrumb-sep">›</span>
       <span class="breadcrumb-item active">${crag.name}</span>`;
   }
+}
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE — BOTTOM SHEET TABS
+════════════════════════════════════════════════════════════ */
+function showMobileTab(tab) {
+  const sidebar  = document.querySelector('.sidebar');
+  const tabMap   = document.getElementById('tabMap');
+  const tabCrags = document.getElementById('tabCrags');
+  if (!tabMap || !tabCrags) return;
+  tabMap.classList.toggle('active',   tab === 'map');
+  tabCrags.classList.toggle('active', tab === 'crags');
+  sidebar.classList.toggle('sheet-open', tab === 'crags');
 }
 
 /* ════════════════════════════════════════════════════════════
