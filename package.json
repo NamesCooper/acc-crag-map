@@ -1,0 +1,27 @@
+{
+  "name": "acc-crag-map",
+  "version": "1.0.0",
+  "description": "",
+  "main": "map.js",
+  "scripts": {
+    "sass": "sass style.scss css/style.css",
+    "sass:watch": "sass --watch style.scss:css/style.css",
+    "serve": "npx serve .",
+    "dev": "sass --watch style.scss:css/style.css & npx serve ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NamesCooper/acc-crag-map.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/NamesCooper/acc-crag-map/issues"
+  },
+  "homepage": "https://github.com/NamesCooper/acc-crag-map#readme",
+  "devDependencies": {
+    "sass": "^1.98.0"
+  }
+}

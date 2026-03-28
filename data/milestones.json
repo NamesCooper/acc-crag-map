@@ -1,0 +1,43 @@
+[
+  { "crag_id": "cedar",     "text": "Crag identified and assessed",               "status": "todo" },
+  { "crag_id": "cedar",     "text": "Access and Historical research underway",     "status": "todo" },
+  { "crag_id": "cedar",     "text": "Council engagement initiated",               "status": "todo" },
+  { "crag_id": "cedar",     "text": "Formal recognition secured",                 "status": "todo" },
+  { "crag_id": "cedar",     "text": "KAYA guidebook documentation",               "status": "todo" },
+  { "crag_id": "cedar",     "text": "Approvals from Council",                     "status": "todo" },
+  { "crag_id": "cedar",     "text": "Full guidebook published on KAYA",           "status": "todo" },
+
+  { "crag_id": "whiterock", "text": "Crag identified and assessed",               "status": "todo" },
+  { "crag_id": "whiterock", "text": "Access and Historical research underway",     "status": "todo" },
+  { "crag_id": "whiterock", "text": "Council engagement initiated",               "status": "todo" },
+  { "crag_id": "whiterock", "text": "Formal recognition secured",                 "status": "todo" },
+  { "crag_id": "whiterock", "text": "KAYA guidebook documentation",               "status": "todo" },
+  { "crag_id": "whiterock", "text": "Approvals from Council",                     "status": "todo" },
+  { "crag_id": "whiterock", "text": "Full guidebook published on KAYA",           "status": "todo" },
+
+  { "crag_id": "tooheys",   "text": "Crag identified and assessed",               "status": "todo" },
+  { "crag_id": "tooheys",   "text": "Access and Historical research underway",     "status": "todo" },
+  { "crag_id": "tooheys",   "text": "Council engagement initiated",               "status": "todo" },
+  { "crag_id": "tooheys",   "text": "Formal recognition secured",                 "status": "todo" },
+  { "crag_id": "tooheys",   "text": "KAYA guidebook documentation",               "status": "todo" },
+  { "crag_id": "tooheys",   "text": "Approvals from Council",                     "status": "todo" },
+  { "crag_id": "tooheys",   "text": "Full guidebook published on KAYA",           "status": "todo" },
+
+  { "crag_id": "plunketts", "text": "Crag identified and assessed",               "status": "todo" },
+  { "crag_id": "plunketts", "text": "Access and Historical research underway",     "status": "todo" },
+  { "crag_id": "plunketts", "text": "Council engagement initiated",               "status": "todo" },
+  { "crag_id": "plunketts", "text": "Formal recognition secured",                 "status": "todo" },
+  { "crag_id": "plunketts", "text": "KAYA guidebook documentation",               "status": "todo" },
+  { "crag_id": "plunketts", "text": "Approvals from Council",                     "status": "todo" },
+  { "crag_id": "plunketts", "text": "Full guidebook published on KAYA",           "status": "todo" },
+
+  { "crag_id": "passchendaele", "text": "Crag identified and assessed",               "status": "todo" },
+  { "crag_id": "passchendaele", "text": "Access and Historical research underway",     "status": "todo" },
+  { "crag_id": "passchendaele", "text": "Council engagement initiated",               "status": "todo" },
+  { "crag_id": "passchendaele", "text": "Formal recognition secured",                 "status": "todo" },
+  { "crag_id": "passchendaele", "text": "KAYA guidebook documentation",               "status": "todo" },
+  { "crag_id": "passchendaele", "text": "Approvals from Council",                     "status": "todo" },
+  { "crag_id": "passchendaele", "text": "Full guidebook published on KAYA",           "status": "todo" }
+
+
+]
