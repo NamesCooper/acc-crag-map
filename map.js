@@ -398,10 +398,7 @@ function selectCrag(id) {
     </div>
     <div class="detail-section">
       <div class="detail-section-label">Council</div>
-      <div class="council-badge status-${crag.status}">
-        <div class="council-dot"></div>
-        <div><div class="council-name">${crag.council}</div><div class="council-status-text">${crag.councilStatus}</div></div>
-      </div>
+      <div class="detail-council">${crag.council}</div>
     </div>
     <div class="detail-section">
       <div class="detail-section-label">Progress — ${progress}%</div>

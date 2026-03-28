@@ -35,14 +35,6 @@
   background: var(--s-bg);
 }
 
-.council-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--s-bg);
-  flex-shrink: 0;
-}
-
 .marker-dot {
   position: relative;
   border-radius: 50%;
@@ -543,25 +535,9 @@ body {
   border-radius: 2px;
 }
 
-.council-badge {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 13px;
-  border: 1px solid rgba(17, 17, 16, 0.08);
-  background: #F7F6F3;
-  margin-bottom: 12px;
-}
-
-.council-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #111110;
-}
-
-.council-status-text {
-  font-size: 14px;
-  color: rgba(17, 17, 16, 0.45);
+.detail-council {
+  font-size: 15px;
+  color: #3A3A36;
 }
 
 .milestones {

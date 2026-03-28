@@ -44,14 +44,6 @@ $font-body:    'Nunito Sans', sans-serif;
   background: var(--s-bg);
 }
 
-.council-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--s-bg);
-  flex-shrink: 0;
-}
-
 .marker-dot {
   position: relative;
   border-radius: 50%;
@@ -595,25 +587,9 @@ body {
   border-radius: 2px;
 }
 
-.council-badge {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 13px;
-  border: 1px solid $rule;
-  background: $cream;
-  margin-bottom: 12px;
-}
-
-.council-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: $ink;
-}
-
-.council-status-text {
-  font-size: 14px;
-  color: $muted;
+.detail-council {
+  font-size: 15px;
+  color: $ink-soft;
 }
 
 .milestones {
