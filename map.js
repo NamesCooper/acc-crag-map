@@ -184,6 +184,10 @@ map.on('zoom', function() {
   }
 });
 function openCragPopup(id) {
+  if (window.innerWidth <= 700) {
+    selectCrag(id);
+    return;
+  }
   const marker = cragMarkers[id];
   if (!marker) return;
   map.flyTo(marker.getLatLng(), Math.max(map.getZoom(), 13), { duration: 0.6 });
@@ -204,6 +208,10 @@ function renderCragMarkers() {
   cragMarkerLayer.clearLayers();
   allCrags.forEach(crag => {
     const marker = L.marker([crag.lat, crag.lng], { icon: markerIcon(crag) });
+    const popupMilestones = allMilestones.filter(m => m.crag_id === crag.id);
+    const popupProgress = popupMilestones.length
+      ? Math.round(popupMilestones.filter(m => m.status === 'done').length / popupMilestones.length * 100)
+      : 0;
     marker.bindPopup(`
       <div class="acc-popup status-${crag.status}">
         <div class="acc-popup-pill">
@@ -212,7 +220,7 @@ function renderCragMarkers() {
         </div>
         <div class="acc-popup-name">${crag.name}</div>
         <div class="acc-popup-loc">${crag.subtitle}</div>
-        <div class="acc-popup-bar-bg"><div class="acc-popup-bar-fill" style="width:${crag.progress}%;"></div></div>
+        <div class="acc-popup-bar-bg"><div class="acc-popup-bar-fill" style="width:${popupProgress}%;"></div></div>
         <span class="acc-popup-link" onclick="map.closePopup();selectCrag('${crag.id}')">View details →</span>
       </div>`, { maxWidth: 260 });
     marker.on('mouseover', () => marker.setIcon(markerIcon(crag, true)));
@@ -354,6 +362,7 @@ function selectCrag(id) {
   if (!crag) return;
   const milestones = allMilestones.filter(m => m.crag_id === id);
   const doneCount  = milestones.filter(m => m.status === 'done').length;
+  const progress   = milestones.length ? Math.round(doneCount / milestones.length * 100) : 0;
   showMobileTab('crags');
 
   // Highlight marker
@@ -395,8 +404,8 @@ function selectCrag(id) {
       </div>
     </div>
     <div class="detail-section">
-      <div class="detail-section-label">Progress — ${crag.progress}%</div>
-      <div class="progress-bar-bg"><div class="progress-bar-fill status-${crag.status}" style="width:${crag.progress}%;"></div></div>
+      <div class="detail-section-label">Progress — ${progress}%</div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill status-${crag.status}" style="width:${progress}%;"></div></div>
     </div>
     <div class="detail-section">
       <div class="detail-section-label">Milestones</div>
