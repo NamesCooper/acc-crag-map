@@ -8,7 +8,7 @@ $gold:     #E8C020;
 $amber:    #C8900A;
 $ink:      #111110;
 $ink-soft: #3A3A36;
-$muted:    rgba(17, 17, 16, 0.45);
+$muted:    rgba(17, 17, 16, 0.55);
 $cream:    #F7F6F3;
 $white:    #FFFFFF;
 $rule:     rgba(17, 17, 16, 0.08);
@@ -517,14 +517,14 @@ body {
   font-size: 26px;
   font-weight: 800;
   color: $ink;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   line-height: 1.15;
 }
 
 .detail-location {
-  font-size: 13px;
+  font-size: 14px;
   color: $muted;
-  margin-bottom: 2px;
+  margin-bottom: 10px;
 }
 
 .detail-section {

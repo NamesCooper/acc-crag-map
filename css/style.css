@@ -151,7 +151,7 @@ body {
 }
 .sidebar-intro {
   font-size: 13px;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
   line-height: 1.7;
 }
 .sidebar-nav {
@@ -225,7 +225,7 @@ body {
 
 .state-meta {
   font-size: 16px;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
   margin-top: 3px;
 }
 
@@ -246,12 +246,12 @@ body {
 
 .badge-soon {
   background: rgba(52, 52, 50, 0.1);
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
 }
 
 .state-arrow {
   font-size: 16px;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
   margin-left: 8px;
 }
 
@@ -313,12 +313,12 @@ body {
 
 .badge-scoping {
   background: rgba(17, 17, 16, 0.06);
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
 }
 
 .crag-meta {
   font-size: 14px;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
   margin-bottom: 6px;
 }
 
@@ -353,7 +353,7 @@ body {
 
 .crag-status-label {
   font-size: 10px;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
 }
 
 .coming-soon {
@@ -385,7 +385,7 @@ body {
 
 .cs-sub {
   font-size: 14px;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
   line-height: 1.7;
   max-width: 260px;
 }
@@ -463,14 +463,14 @@ body {
   font-size: 26px;
   font-weight: 800;
   color: #111110;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   line-height: 1.15;
 }
 
 .detail-location {
-  font-size: 13px;
-  color: rgba(17, 17, 16, 0.45);
-  margin-bottom: 2px;
+  font-size: 14px;
+  color: rgba(17, 17, 16, 0.55);
+  margin-bottom: 10px;
 }
 
 .detail-section {
@@ -481,7 +481,7 @@ body {
   font-weight: 600;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
   margin-bottom: 7px;
   padding-bottom: 5px;
   border-bottom: 1px solid rgba(17, 17, 16, 0.08);
@@ -519,7 +519,7 @@ body {
   font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
 }
 
 .progress-bar-bg {
@@ -541,7 +541,7 @@ body {
 
 .detail-council {
   font-size: 15px;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
   margin-bottom: 16px;
 }
 
@@ -584,7 +584,7 @@ body {
   line-height: 1.55;
 }
 .mtext-done {
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
 }
 .mtext-progress {
   color: #3A3A36;
@@ -599,7 +599,7 @@ body {
   background: #F7F6F3;
   border: 1px solid rgba(17, 17, 16, 0.08);
   font-size: 14px;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
   line-height: 1.7;
 }
 .info-strip strong {
@@ -629,7 +629,7 @@ body {
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
 }
 
 #map {
@@ -651,7 +651,7 @@ body {
   display: none !important;
 }
 .leaflet-popup-close-button {
-  color: rgba(17, 17, 16, 0.45) !important;
+  color: rgba(17, 17, 16, 0.55) !important;
   font-size: 20px !important;
   top: 8px !important;
   right: 8px !important;
@@ -681,7 +681,7 @@ body {
 }
 .acc-popup-loc {
   font-size: 12px;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
   letter-spacing: 1px;
   margin-bottom: 9px;
 }
@@ -716,7 +716,7 @@ body {
 }
 .state-popup-meta {
   font-size: 11px;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
   margin-bottom: 10px;
 }
 .state-popup-link {
@@ -728,7 +728,7 @@ body {
 }
 .state-popup-soon {
   font-size: 10px;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
   font-style: italic;
 }
 
@@ -748,7 +748,7 @@ body {
   font-weight: 600;
   letter-spacing: 2.5px;
   text-transform: uppercase;
-  color: rgba(17, 17, 16, 0.45);
+  color: rgba(17, 17, 16, 0.55);
   margin-bottom: 10px;
 }
 
@@ -868,7 +868,7 @@ body {
     background: none;
     border: none;
     cursor: pointer;
-    color: rgba(17, 17, 16, 0.45);
+    color: rgba(17, 17, 16, 0.55);
     font-family: "Nunito Sans", sans-serif;
     font-size: 10px;
     font-weight: 600;
@@ -885,3 +885,5 @@ body {
     height: 20px;
   }
 }
+
+/*# sourceMappingURL=style.css.map */
