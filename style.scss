@@ -1,26 +1,5 @@
 // Acacia Climbing Coalition — Crag Map Styles
-
-// ── VARIABLES ──
-$forest:   #2D5016;
-$green:    #3A6B1E;
-$bright:   #5AAA3A;
-$gold:     #E8C020;
-$amber:    #C8900A;
-$ink:      #111110;
-$ink-soft: #3A3A36;
-$muted:    rgba(17, 17, 16, 0.55);
-$cream:    #F7F6F3;
-$white:    #FFFFFF;
-$rule:     rgba(17, 17, 16, 0.08);
-$done-bg:  #EAF3DE;
-$prog-bg:  #FAEEDA;
-
-$sidebar-width:       360px;
-$sidebar-width-wide:  400px;
-
-// ── FONTS ──
-$font-heading: 'Manrope', sans-serif;
-$font-body:    'Nunito Sans', sans-serif;
+@use 'variables' as *;
 
 // ── STATUS TOKENS ──
 // Applied as a class on JS-generated HTML; descendants consume the custom properties

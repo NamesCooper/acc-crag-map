@@ -4,10 +4,10 @@
   "description": "",
   "main": "map.js",
   "scripts": {
-    "sass": "sass style.scss css/style.css",
-    "sass:watch": "sass --watch style.scss:css/style.css",
+    "sass": "sass style.scss:css/style.css widget.scss:css/widget.css",
+    "sass:watch": "sass --watch style.scss:css/style.css widget.scss:css/widget.css",
     "serve": "npx serve .",
-    "dev": "sass --watch style.scss:css/style.css & npx serve ."
+    "dev": "sass --watch style.scss:css/style.css widget.scss:css/widget.css & npx serve ."
   },
   "repository": {
     "type": "git",

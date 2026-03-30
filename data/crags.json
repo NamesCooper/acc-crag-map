@@ -13,7 +13,8 @@
     "style": "Granite",
     "season": "Year Round",
     "state": "QLD",
-    "region": "SEQLD"
+    "region": "SEQLD",
+    "updatedAt": "2026-01-10"
   },
   {
     "id": "whiterock",
@@ -29,7 +30,8 @@
     "style": "Sandstone",
     "season": "Year Round",
     "state": "QLD",
-    "region": "SEQLD"
+    "region": "SEQLD",
+    "updatedAt": "2026-03-15"
   },
   {
     "id": "tooheys",
@@ -45,7 +47,8 @@
     "style": "Sandstone",
     "season": "Year Round",
     "state": "QLD",
-    "region": "SEQLD"
+    "region": "SEQLD",
+    "updatedAt": "2026-03-28"
   },
   {
     "id": "plunketts",
@@ -61,7 +64,8 @@
     "style": "Mixed · Varied styles",
     "season": "July - October",
     "state": "QLD",
-    "region": "SEQLD"
+    "region": "SEQLD",
+    "updatedAt": "2026-02-20"
   },
   {
     "id": "passchendaele",
@@ -77,6 +81,7 @@
     "style": "Granite",
     "season": "August - October",
     "state": "QLD",
-    "region": "SEQLD"
+    "region": "SEQLD",
+    "updatedAt": "2026-02-01"
   }
 ]

@@ -1,0 +1,134 @@
+// Acacia Climbing Coalition — Widget Styles
+@use 'variables' as *;
+
+// ── RESET ──
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: $font-body;
+  font-weight: 300;
+  background: transparent;
+  color: $ink;
+}
+
+// ── GRID ──
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid rgba(17, 17, 16, 0.12);
+
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+
+  @media (max-width: 540px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+// ── CARD ──
+.crag-card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 18px;
+  border-right: 1px solid rgba(17, 17, 16, 0.12);
+  border-bottom: 1px solid rgba(17, 17, 16, 0.12);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s;
+  position: relative;
+  min-height: 180px;
+
+  &:last-child { border-right: none; }
+  &:hover { background: $cream; }
+
+  // status colour tokens
+  &.status-active   { --s-dot: #{$forest}; --s-label: #{$forest}; --s-bar: #{$forest}; }
+  &.status-progress { --s-dot: #{$amber};  --s-label: #{$amber};  --s-bar: #{$amber};  }
+  &.status-scoping  { --s-dot: #888780;    --s-label: #888780;    --s-bar: #888780;    }
+}
+
+.card-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--s-label);
+  margin-bottom: 14px;
+}
+
+.card-pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--s-dot);
+  flex-shrink: 0;
+}
+
+.card-name {
+  font-family: $font-heading;
+  font-size: 24px;
+  font-weight: 700;
+  color: $ink;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.card-subtitle {
+  font-size: 14px;
+  color: rgba(17, 17, 16, 0.5);
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.card-council {
+  font-size: 14px;
+  color: rgba(17, 17, 16, 0.4);
+  margin-bottom: auto;
+  padding-bottom: 20px;
+}
+
+// ── PROGRESS ──
+.card-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.card-progress-wrap { flex: 1; }
+
+.card-progress-pct {
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(17, 17, 16, 0.45);
+  margin-bottom: 5px;
+}
+
+.card-bar-bg {
+  height: 2px;
+  background: rgba(17, 17, 16, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.card-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--s-bar);
+  transition: width 0.6s ease;
+}
+
+// ── LOADING / ERROR ──
+.widget-loading {
+  padding: 40px 0;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(17, 17, 16, 0.35);
+}

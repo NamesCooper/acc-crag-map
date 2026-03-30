@@ -112,7 +112,7 @@ function renderStatePolygons(geojson) {
 
       layer.bindPopup(popupContent, { maxWidth:220 });
       layer.on('click', function() {
-        if (currentCrag) { goState(); return; }
+        // If we're already viewing this state (with or without a crag open), do nothing
         if (currentState && currentState.id === cfg.id) return;
         this.openPopup();
       });
@@ -242,6 +242,8 @@ function openCragPopup(id) {
     selectCrag(id);
     return;
   }
+  // If detail panel already shows this crag, do nothing
+  if (currentCrag?.id === id) return;
   const crag = allCrags.find(c => c.id === id);
   const marker = cragMarkers[id];
   if (!marker) return;
@@ -278,10 +280,16 @@ function renderCragMarkers() {
         <div class="acc-popup-loc">${crag.subtitle}</div>
         <div class="acc-popup-bar-bg"><div class="acc-popup-bar-fill" style="width:${popupProgress}%;"></div></div>
         <span class="acc-popup-link" onclick="map.closePopup();selectCrag('${crag.id}')">View details →</span>
-      </div>`, { maxWidth: 260 });
+      </div>`, { maxWidth: 260, autoPan: false });
     marker.on('mouseover', () => marker.setIcon(markerIcon(crag, true)));
     marker.on('mouseout',  () => marker.setIcon(markerIcon(crag, false)));
-    marker.on('click',     () => marker.openPopup());
+    // Leaflet's bindPopup registers its own click handler that fires first.
+    // If the detail panel is already showing this crag, close the popup Leaflet just opened.
+    marker.on('click', () => {
+      if (currentCrag?.id === crag.id) {
+        marker.closePopup();
+      }
+    });
     marker.on('popupclose', () => { if (!currentCrag) clearCragArea(); });
     marker.addTo(cragMarkerLayer);
     cragMarkers[crag.id] = marker;
@@ -330,6 +338,7 @@ function renderAustraliaView() {
 function goAustralia() {
   currentState = null;
   currentCrag  = null;
+  history.replaceState(null, '', ' ');
   clearCragArea();
   showOnly('australiaView');
   document.getElementById('sidebarEyebrow').textContent = 'Select a state';
@@ -413,6 +422,7 @@ function selectState(stateId) {
 
 function goState() {
   currentCrag = null;
+  history.replaceState(null, '', ' ');
   clearCragArea();
   if (!currentState) { goAustralia(); return; }
   selectState(currentState.id);
@@ -422,7 +432,14 @@ function goState() {
 function selectCrag(id) {
   const crag      = allCrags.find(c => c.id === id);
   if (!crag) return;
+  // Already showing this crag — close any stale popup and bail
+  if (currentCrag?.id === id) {
+    map.closePopup();
+    return;
+  }
   currentCrag = crag;
+  history.replaceState(null, '', '#' + id);
+  map.closePopup();
   const milestones = allMilestones.filter(m => m.crag_id === id);
   const doneCount  = milestones.filter(m => m.status === 'done').length;
   const progress   = milestones.length ? Math.round(doneCount / milestones.length * 100) : 0;
@@ -517,5 +534,20 @@ function showMobileTab(tab) {
 
 /* ════════════════════════════════════════════════════════════
    INIT
+   If the URL contains a #crag-id hash (e.g. from widget.html links),
+   auto-open that crag detail once data has loaded.
 ════════════════════════════════════════════════════════════ */
-loadData();
+async function init() {
+  await loadData();
+  const hash = window.location.hash.slice(1); // e.g. "tooheys"
+  if (!hash) return;
+  const crag = allCrags.find(c => c.id === hash);
+  if (!crag) return;
+  const state = STATES.find(s => s.id === crag.state);
+  if (state) {
+    await selectState(state.id);   // show state view first (sets currentState)
+  }
+  selectCrag(crag.id);             // then open the crag detail
+}
+
+init();

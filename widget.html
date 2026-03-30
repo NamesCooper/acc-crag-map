@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACC — Recent Crag Updates</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400&family=Nunito+Sans:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/widget.css">
+</head>
+<body>
+  <div class="widget-grid" id="widgetGrid">
+    <div class="widget-loading">Loading crags…</div>
+  </div>
+
+  <script>
+    const MAP_URL = 'index.html';
+
+    async function init() {
+      const [crags, milestones] = await Promise.all([
+        fetch('data/crags.json').then(r => r.json()),
+        fetch('data/milestones.json').then(r => r.json()),
+      ]);
+
+      const sorted = [...crags]
+        .filter(c => c.updatedAt)
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+        .slice(0, 4);
+
+      const grid = document.getElementById('widgetGrid');
+      grid.innerHTML = sorted.map((crag, i) => {
+        const ms   = milestones.filter(m => m.crag_id === crag.id);
+        const done = ms.filter(m => m.status === 'done').length;
+        const pct  = ms.length ? Math.round(done / ms.length * 100) : 0;
+        const num  = String(i + 1).padStart(2, '0');
+
+        return `
+          <a class="crag-card status-${crag.status}" href="${MAP_URL}#${crag.id}" target="_blank">
+            <div class="card-pill">
+              <div class="card-pill-dot"></div>
+              ${crag.statusLabel}
+            </div>
+            <div class="card-name">${crag.name}</div>
+            <div class="card-subtitle">${crag.subtitle}</div>
+            <div class="card-council">${crag.council}</div>
+            <div class="card-footer">
+              <div class="card-progress-wrap">
+                <div class="card-progress-pct">${pct}%</div>
+                <div class="card-bar-bg">
+                  <div class="card-bar-fill" style="width:${pct}%"></div>
+                </div>
+              </div>
+              <div class="card-number">${num}</div>
+            </div>
+          </a>`;
+      }).join('');
+    }
+
+    init().catch(err => {
+      document.getElementById('widgetGrid').innerHTML =
+        '<div class="widget-loading">Could not load crag data.</div>';
+      console.error(err);
+    });
+  </script>
+</body>
+</html>

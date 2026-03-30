@@ -142,7 +142,7 @@ body {
   margin-bottom: 6px;
 }
 .sidebar-title {
-  font-family: "Manrope", sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 22px;
   font-weight: 800;
   color: #111110;
@@ -217,7 +217,7 @@ body {
 }
 
 .state-name {
-  font-family: "Manrope", sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 16px;
   font-weight: 700;
   color: #111110;
@@ -283,7 +283,7 @@ body {
 }
 
 .crag-name {
-  font-family: "Manrope", sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 15px;
   font-weight: 700;
   color: #111110;
@@ -377,7 +377,7 @@ body {
 }
 
 .cs-title {
-  font-family: "Manrope", sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: #111110;
@@ -460,7 +460,7 @@ body {
 }
 
 .detail-name {
-  font-family: "Manrope", sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 26px;
   font-weight: 800;
   color: #111110;
@@ -508,7 +508,7 @@ body {
 }
 
 .stat-num {
-  font-family: "Manrope", sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: #2D5016;
@@ -674,7 +674,7 @@ body {
   margin-bottom: 9px;
 }
 .acc-popup-name {
-  font-family: "Manrope", sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: #111110;
@@ -709,7 +709,7 @@ body {
   padding: 15px 18px 13px;
 }
 .state-popup-name {
-  font-family: "Manrope", sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: #111110;
@@ -886,3 +886,5 @@ body {
     height: 20px;
   }
 }
+
+/*# sourceMappingURL=style.css.map */
