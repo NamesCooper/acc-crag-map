@@ -242,10 +242,12 @@ function openCragPopup(id) {
     selectCrag(id);
     return;
   }
+  const crag = allCrags.find(c => c.id === id);
   const marker = cragMarkers[id];
   if (!marker) return;
   map.flyTo(marker.getLatLng(), Math.max(map.getZoom(), 13), { duration: 0.6 });
   marker.openPopup();
+  if (crag) showCragArea(crag);
 }
 
 function markerIcon(crag, active = false) {
@@ -280,6 +282,7 @@ function renderCragMarkers() {
     marker.on('mouseover', () => marker.setIcon(markerIcon(crag, true)));
     marker.on('mouseout',  () => marker.setIcon(markerIcon(crag, false)));
     marker.on('click',     () => marker.openPopup());
+    marker.on('popupclose', () => { if (!currentCrag) clearCragArea(); });
     marker.addTo(cragMarkerLayer);
     cragMarkers[crag.id] = marker;
   });
