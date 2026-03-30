@@ -1,14 +1,6 @@
 /* Acacia Climbing Coalition — Crag Map Logic */
 
 /* ════════════════════════════════════════════════════════════
-   CONFIG — paste your Google Sheets CSV URLs here
-════════════════════════════════════════════════════════════ */
-const SHEETS = {
-  crags:      'https://docs.google.com/spreadsheets/d/e/2PACX-1vS6CIymbHLOnMBnVOeFpDD1rBWtSjZqPbS5dYDEc-_3NQvBV-f89M9xrRiDeKBS8aiDTXwiC37yjAOS/pub?gid=0&single=true&output=csv',
-  milestones: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS6CIymbHLOnMBnVOeFpDD1rBWtSjZqPbS5dYDEc-_3NQvBV-f89M9xrRiDeKBS8aiDTXwiC37yjAOS/pub?gid=577633604&single=true&output=csv',
-};
-
-/* ════════════════════════════════════════════════════════════
    STATES CONFIG
    Centre + zoom for each state's map view.
    Boundaries are drawn from states.geojson.
@@ -40,6 +32,7 @@ const STATUS = {
 const map = L.map('map', {
   center: [-27.0, 134.0],
   zoom: 4,
+  zoomSnap: 0.25,
   zoomControl: false,
   minZoom: 3,
 });
@@ -99,6 +92,8 @@ function renderStatePolygons(geojson) {
       statePolygons[cfg.id] = layer;
 
       layer.on('mouseover', function() {
+        if (currentCrag) return;
+        if (currentState && currentState.id === cfg.id) return;
         this.setStyle({ fillOpacity: cfg.active ? 0.22 : 0.38, weight: cfg.active ? 3 : 2 });
         this.getElement().style.cursor = 'pointer';
       });
@@ -117,6 +112,8 @@ function renderStatePolygons(geojson) {
 
       layer.bindPopup(popupContent, { maxWidth:220 });
       layer.on('click', function() {
+        if (currentCrag) { goState(); return; }
+        if (currentState && currentState.id === cfg.id) return;
         this.openPopup();
       });
     }
@@ -133,20 +130,64 @@ fetch('states.geojson')
 ════════════════════════════════════════════════════════════ */
 let allCrags = [];
 let allMilestones = [];
+let allAreas = null;
+let cragAreaLayer = null;
+const STATUS_COLORS = { active: '#2D5016', progress: '#C8900A', scoping: '#888780' };
 const cragMarkers = {};
 const cragMarkerLayer = L.layerGroup().addTo(map);
 
 async function loadData() {
-  const [cr, mr] = await Promise.all([
+  const [cr, mr, ar] = await Promise.all([
     fetch('data/crags.json').then(r => r.json()),
     fetch('data/milestones.json').then(r => r.json()),
+    fetch('data/areas.geojson').then(r => r.json()).catch(() => null),
   ]);
   allCrags      = cr;
   allMilestones = mr;
+  allAreas      = ar;
   renderAustraliaView();
   renderCragMarkers();
+  fitAustraliaView(false);
   document.getElementById('loadingView').style.display = 'none';
   document.getElementById('australiaView').classList.add('visible');
+}
+
+function showCragArea(crag) {
+  clearCragArea();
+  if (!allAreas) return;
+  const feature = allAreas.features.find(f => f.properties.crag_id === crag.id);
+  if (!feature) return;
+  const color = STATUS_COLORS[crag.status] || STATUS_COLORS.scoping;
+  cragAreaLayer = L.geoJSON(feature, {
+    style: {
+      color,
+      weight: 2,
+      opacity: 0.7,
+      fillColor: color,
+      fillOpacity: 0.12,
+      dashArray: '6 4',
+    }
+  }).addTo(map);
+}
+
+function clearCragArea() {
+  if (cragAreaLayer) {
+    map.removeLayer(cragAreaLayer);
+    cragAreaLayer = null;
+  }
+}
+
+function fitAustraliaView(animate) {
+  const sidebarPad = window.innerWidth > 700 ? 380 : 10;
+  const opts = {
+    paddingTopLeft:     [sidebarPad, 20],
+    paddingBottomRight: [sidebarPad, 20],
+  };
+  if (animate) {
+    map.flyToBounds([[-45, 111], [-9, 155]], { ...opts, duration: 1.0 });
+  } else {
+    map.fitBounds([[-45, 111], [-9, 155]], opts);
+  }
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -156,26 +197,39 @@ async function loadData() {
 
 // Zoom threshold at which crag markers auto-appear
 const CRAG_ZOOM_THRESHOLD = 7;
+// Zoom threshold at which state polygon borders fade out
+const POLYGON_HIDE_ZOOM = 8;
 
 map.on('zoom', function() {
   const z = map.getZoom();
+
+  // Fade state polygon borders when zoomed in close
+  const borderOpacity = z >= POLYGON_HIDE_ZOOM ? 0 : null;
+  if (borderOpacity !== null) {
+    Object.values(statePolygons).forEach(p => p.setStyle({ opacity: 0, fillOpacity: 0 }));
+  } else if (currentState) {
+    // Restore selected-state styling
+    STATES.forEach(s => {
+      const p = statePolygons[s.id];
+      if (!p) return;
+      if (s.id === currentState.id) {
+        p.setStyle({ fillOpacity: s.active ? 0.18 : 0.12, weight: 3.5, opacity: 1.0 });
+      } else {
+        p.setStyle({ fillOpacity: s.active ? 0.04 : 0.14, weight: 1.0, opacity: 0.35 });
+      }
+    });
+  } else {
+    STATES.forEach(s => {
+      const p = statePolygons[s.id];
+      if (p) p.setStyle({ fillOpacity: s.active ? 0.10 : 0.28, weight: s.active ? 2.5 : 2.0, opacity: s.active ? 0.8 : 0.85 });
+    });
+  }
+
   if (z >= CRAG_ZOOM_THRESHOLD) {
     if (!map.hasLayer(cragMarkerLayer)) {
       cragMarkerLayer.addTo(map);
     }
-    // If no state is selected yet, auto-select QLD when zoomed in
-    if (!currentState) {
-      const center = map.getCenter();
-      // Find which state polygon contains the map center
-      STATES.forEach(s => {
-        const p = statePolygons[s.id];
-        if (p && s.active) {
-          // Show markers but don't change sidebar unless user clicks
-        }
-      });
-    }
   } else {
-    // Only hide markers if we're back at Australia overview level
     if (!currentState || !currentState.active) {
       if (map.hasLayer(cragMarkerLayer)) {
         map.removeLayer(cragMarkerLayer);
@@ -238,6 +292,7 @@ function renderCragMarkers() {
    Three levels: Australia → State → Crag
 ════════════════════════════════════════════════════════════ */
 let currentState = null;
+let currentCrag  = null;
 
 function showOnly(viewId) {
   ['loadingView','australiaView','stateView','comingSoon','detailPanel'].forEach(id => {
@@ -271,18 +326,20 @@ function renderAustraliaView() {
 
 function goAustralia() {
   currentState = null;
+  currentCrag  = null;
+  clearCragArea();
   showOnly('australiaView');
   document.getElementById('sidebarEyebrow').textContent = 'Select a state';
   document.getElementById('sidebarTitle').textContent   = 'Australian Climbing Access';
   document.getElementById('sidebarIntro').textContent   = 'ACC is building the access and guidebook infrastructure for Australian bouldering. Select a state to see what\'s active.';
   document.getElementById('sidebarNav').style.display   = 'none';
   updateBreadcrumb('australia');
-  map.flyTo([-27.0, 134.0], 4, { duration:1.0 });
+  fitAustraliaView(true);
   map.removeLayer(cragMarkerLayer);
   // Reset all state polygon highlights
   STATES.forEach(s => {
     const p = statePolygons[s.id];
-    if (p) p.setStyle({ fillOpacity: s.active ? 0.08 : 0.28, weight: s.active ? 2 : 2.0 });
+    if (p) p.setStyle({ fillOpacity: s.active ? 0.10 : 0.28, weight: s.active ? 2.5 : 2.0, opacity: s.active ? 0.8 : 0.85 });
   });
 }
 
@@ -303,9 +360,9 @@ function selectState(stateId) {
     const p = statePolygons[s.id];
     if (!p) return;
     if (s.id === stateId) {
-      p.setStyle({ fillOpacity: s.active ? 0.18 : 0.12, weight: s.active ? 2.5 : 2 });
+      p.setStyle({ fillOpacity: s.active ? 0.18 : 0.12, weight: 3.5, opacity: 1.0 });
     } else {
-      p.setStyle({ fillOpacity: s.active ? 0.05 : 0.22, weight: s.active ? 1.5 : 2.0 });
+      p.setStyle({ fillOpacity: s.active ? 0.04 : 0.14, weight: 1.0, opacity: 0.35 });
     }
   });
 
@@ -352,6 +409,8 @@ function selectState(stateId) {
 }
 
 function goState() {
+  currentCrag = null;
+  clearCragArea();
   if (!currentState) { goAustralia(); return; }
   selectState(currentState.id);
 }
@@ -360,6 +419,7 @@ function goState() {
 function selectCrag(id) {
   const crag      = allCrags.find(c => c.id === id);
   if (!crag) return;
+  currentCrag = crag;
   const milestones = allMilestones.filter(m => m.crag_id === id);
   const doneCount  = milestones.filter(m => m.status === 'done').length;
   const progress   = milestones.length ? Math.round(doneCount / milestones.length * 100) : 0;
@@ -371,6 +431,7 @@ function selectCrag(id) {
   );
 
   map.flyTo([crag.lat, crag.lng], 13, { duration:0.9 });
+  showCragArea(crag);
   updateBreadcrumb('crag', currentState, crag);
 
   const milestonesHTML = milestones.length

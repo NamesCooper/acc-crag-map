@@ -463,7 +463,7 @@ body {
   display: none;
   flex-direction: column;
   flex: 1;
-  overflow-y: auto;
+  overflow: hidden;
 
   &.visible {
     display: flex;
@@ -497,6 +497,7 @@ body {
 .detail-content {
   padding: 20px 24px 32px;
   flex: 1;
+  overflow-y: auto;
 }
 
 .detail-pill {
