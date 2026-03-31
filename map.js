@@ -21,9 +21,10 @@ const STATES = [
    STATUS CONFIG
 ════════════════════════════════════════════════════════════ */
 const STATUS = {
-  active:   { size: 28 },
-  progress: { size: 24 },
-  scoping:  { size: 20 },
+  active:      { size: 28 },
+  recognised:  { size: 28 },
+  progress:    { size: 24 },
+  scoping:     { size: 20 },
 };
 
 /* ════════════════════════════════════════════════════════════
@@ -132,7 +133,7 @@ let allCrags = [];
 let allMilestones = [];
 let allAreas = null;
 let cragAreaLayer = null;
-const STATUS_COLORS = { active: '#2D5016', progress: '#C8900A', scoping: '#888780' };
+const STATUS_COLORS = { active: '#5AAA3A', recognised: '#2D5016', progress: '#C8900A', scoping: '#888780' };
 const cragMarkers = {};
 const cragMarkerLayer = L.layerGroup().addTo(map);
 
@@ -254,7 +255,7 @@ function openCragPopup(id) {
 
 function markerIcon(crag, active = false) {
   const s = (STATUS[crag.status] || STATUS.scoping).size;
-  const pulse = crag.status === 'progress' ? `<div class="marker-pulse"></div>` : '';
+  const pulse = crag.status !== 'scoping' ? `<div class="marker-pulse"></div>` : '';
   return L.divIcon({
     className: `status-${crag.status}`,
     html: `<div class="marker-dot${active ? ' active' : ''}" style="width:${s}px;height:${s}px;">${pulse}</div>`,

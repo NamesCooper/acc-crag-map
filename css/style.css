@@ -1,6 +1,12 @@
 .status-active {
-  --s-bg: #2D5016;
+  --s-bg: #5AAA3A;
   --s-pill: #EAF3DE;
+  --s-text: #5AAA3A;
+}
+
+.status-recognised {
+  --s-bg: #2D5016;
+  --s-pill: #D6E8C8;
   --s-text: #2D5016;
 }
 

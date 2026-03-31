@@ -31,7 +31,6 @@
         const ms   = milestones.filter(m => m.crag_id === crag.id);
         const done = ms.filter(m => m.status === 'done').length;
         const pct  = ms.length ? Math.round(done / ms.length * 100) : 0;
-        const num  = String(i + 1).padStart(2, '0');
 
         return `
           <a class="crag-card status-${crag.status}" href="${MAP_URL}#${crag.id}" target="_blank">
@@ -49,7 +48,6 @@
                   <div class="card-bar-fill" style="width:${pct}%"></div>
                 </div>
               </div>
-              <div class="card-number">${num}</div>
             </div>
           </a>`;
       }).join('');

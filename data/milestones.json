@@ -22,8 +22,8 @@
   { "crag_id": "tooheys",       "text": "Council & Park Ranger Contact",                                     "status": "done" },
   { "crag_id": "tooheys",       "text": "Initial Plan Discussion & Approvals",                               "status": "done" },
   { "crag_id": "tooheys",       "text": "Site Visit — GPS, Photos, Crag Mapping & KAYA Documentation",      "status": "done" },
-  { "crag_id": "tooheys",       "text": "Access Issues Resolved",                                            "status": "progress" },
-  { "crag_id": "tooheys",       "text": "Final Council Approvals",                                           "status": "done" },
+  { "crag_id": "tooheys",       "text": "Access Issues Resolved",                                            "status": "done" },
+  { "crag_id": "tooheys",       "text": "Final Council Approvals",                                           "status": "progress" },
   { "crag_id": "tooheys",       "text": "Guidebook Published on KAYA",                                       "status": "todo" },
 
   { "crag_id": "plunketts",     "text": "Area Research, History & General Mapping",                          "status": "done" },

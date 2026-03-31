@@ -14,7 +14,6 @@ body {
 .widget-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  border-top: 1px solid rgba(17, 17, 16, 0.12);
 }
 @media (max-width: 900px) {
   .widget-grid {
@@ -24,29 +23,32 @@ body {
 @media (max-width: 540px) {
   .widget-grid {
     grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
 
 .crag-card {
   display: flex;
   flex-direction: column;
-  padding: 20px 20px 18px;
-  border-right: 1px solid rgba(17, 17, 16, 0.12);
-  border-bottom: 1px solid rgba(17, 17, 16, 0.12);
+  padding: 24px 22px 20px;
+  background: #FFFFFF;
+  border: 1px solid rgba(17, 17, 16, 0.1);
   cursor: pointer;
   text-decoration: none;
   color: inherit;
-  transition: background 0.15s;
-  position: relative;
-  min-height: 180px;
-}
-.crag-card:last-child {
-  border-right: none;
+  transition: box-shadow 0.2s, transform 0.2s;
+  min-height: 210px;
 }
 .crag-card:hover {
-  background: #F7F6F3;
+  box-shadow: 0 6px 24px rgba(17, 17, 16, 0.1);
+  transform: translateY(-2px);
 }
 .crag-card.status-active {
+  --s-dot: #5AAA3A;
+  --s-label: #5AAA3A;
+  --s-bar: #5AAA3A;
+}
+.crag-card.status-recognised {
   --s-dot: #2D5016;
   --s-label: #2D5016;
   --s-bar: #2D5016;
@@ -61,17 +63,33 @@ body {
   --s-label: #888780;
   --s-bar: #888780;
 }
+@media (max-width: 540px) {
+  .crag-card {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: auto;
+    padding: 18px 18px 16px;
+    gap: 0;
+  }
+}
 
 .card-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--s-label);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
+}
+@media (max-width: 540px) {
+  .card-pill {
+    width: 100%;
+    margin-bottom: 8px;
+  }
 }
 
 .card-pill-dot {
@@ -84,33 +102,58 @@ body {
 
 .card-name {
   font-family: "Raleway", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   color: #111110;
-  line-height: 1.1;
-  margin-bottom: 8px;
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
+@media (max-width: 540px) {
+  .card-name {
+    font-size: 22px;
+    flex: 1;
+    margin-bottom: 0;
+    align-self: center;
+  }
 }
 
 .card-subtitle {
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(17, 17, 16, 0.5);
   line-height: 1.5;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
+}
+@media (max-width: 540px) {
+  .card-subtitle {
+    display: none;
+  }
 }
 
 .card-council {
-  font-size: 14px;
-  color: rgba(17, 17, 16, 0.4);
+  font-size: 12px;
+  color: rgba(17, 17, 16, 0.45);
   margin-bottom: auto;
-  padding-bottom: 20px;
+  padding-bottom: 24px;
+}
+@media (max-width: 540px) {
+  .card-council {
+    display: none;
+  }
 }
 
 .card-footer {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 8px;
+  gap: 10px;
   margin-top: auto;
+}
+@media (max-width: 540px) {
+  .card-footer {
+    width: 100%;
+    margin-top: 14px;
+    align-items: center;
+  }
 }
 
 .card-progress-wrap {
@@ -118,15 +161,15 @@ body {
 }
 
 .card-progress-pct {
-  font-family: "Nunito Sans", sans-serif;
-  font-size: 14px;
+  font-family: "Raleway", sans-serif;
+  font-size: 13px;
   font-weight: 700;
-  color: rgba(17, 17, 16, 0.45);
-  margin-bottom: 5px;
+  color: rgba(17, 17, 16, 0.5);
+  margin-bottom: 6px;
 }
 
 .card-bar-bg {
-  height: 2px;
+  height: 3px;
   background: rgba(17, 17, 16, 0.08);
   border-radius: 2px;
   overflow: hidden;
