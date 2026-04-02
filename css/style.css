@@ -1,4 +1,4 @@
-.status-active {
+.status-completed {
   --s-bg: #5AAA3A;
   --s-pill: #EAF3DE;
   --s-text: #5AAA3A;
@@ -307,8 +307,13 @@ body {
   margin-top: 2px;
 }
 
-.badge-active {
+.badge-completed {
   background: #EAF3DE;
+  color: #2D5016;
+}
+
+.badge-recognised {
+  background: #D6E8C8;
   color: #2D5016;
 }
 

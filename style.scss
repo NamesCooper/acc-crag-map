@@ -3,7 +3,7 @@
 
 // ── STATUS TOKENS ──
 // Applied as a class on JS-generated HTML; descendants consume the custom properties
-.status-active      { --s-bg: #5AAA3A; --s-pill: #EAF3DE; --s-text: #5AAA3A; }
+.status-completed   { --s-bg: #5AAA3A; --s-pill: #EAF3DE; --s-text: #5AAA3A; }
 .status-recognised  { --s-bg: #2D5016; --s-pill: #D6E8C8; --s-text: #2D5016; }
 .status-progress    { --s-bg: #C8900A; --s-pill: #FAEEDA; --s-text: #C8900A; }
 .status-scoping     { --s-bg: #888780; --s-pill: #F1EFE8; --s-text: #888780; }
@@ -325,8 +325,13 @@ body {
   margin-top: 2px;
 }
 
-.badge-active {
+.badge-completed {
   background: $done-bg;
+  color: $forest;
+}
+
+.badge-recognised {
+  background: #D6E8C8;
   color: $forest;
 }
 
