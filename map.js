@@ -401,7 +401,6 @@ function selectState(stateId) {
           <div class="crag-meta">${crag.council}</div>
           <div class="crag-status-row">
             ${doneCount>0?`<div class="crag-status-item"><div class="sdot sdot-done"></div><div class="crag-status-label">${doneCount} milestone${doneCount>1?'s':''} complete</div></div>`:''}
-            ${hasProgress?`<div class="crag-status-item"><div class="sdot sdot-progress"></div><div class="crag-status-label">In progress</div></div>`:''}
           </div>
         </div>`;
     }).join('');
