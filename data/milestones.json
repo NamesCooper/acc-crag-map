@@ -38,7 +38,7 @@
   { "crag_id": "passchendaele", "text": "Area Research, History & General Mapping",                          "status": "done" },
   { "crag_id": "passchendaele", "text": "Guidebook Author Outreach (If Applicable)",                        "status": "done" },
   { "crag_id": "passchendaele", "text": "Council & Park Ranger Contact",                                     "status": "done" },
-  { "crag_id": "passchendaele", "text": "Initial Plan Discussion & Approvals",                               "status": "done" },
+  { "crag_id": "passchendaele", "text": "Initial Plan Discussion & Approvals",                               "status": "progress" },
   { "crag_id": "passchendaele", "text": "Site Visit — GPS, Photos, Crag Mapping & KAYA Documentation",      "status": "todo" },
   { "crag_id": "passchendaele", "text": "Access Issues Resolved",                                            "status": "todo" },
   { "crag_id": "passchendaele", "text": "Final Council Approvals",                                           "status": "todo" },
