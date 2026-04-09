@@ -115,7 +115,7 @@ function renderStatePolygons(geojson) {
       layer.on('click', function() {
         // If we're already viewing this state (with or without a crag open), do nothing
         if (currentState && currentState.id === cfg.id) return;
-        this.openPopup();
+        this.openPopup(cfg.center);
       });
     }
   }).addTo(map);
@@ -179,10 +179,8 @@ function clearCragArea() {
 }
 
 function fitAustraliaView(animate) {
-  const sidebarPad = window.innerWidth > 700 ? 380 : 10;
   const opts = {
-    paddingTopLeft:     [sidebarPad, 20],
-    paddingBottomRight: [sidebarPad, 20],
+    padding: [20, 20],
   };
   if (animate) {
     map.flyToBounds([[-45, 111], [-9, 155]], { ...opts, duration: 1.0 });
@@ -204,9 +202,8 @@ const POLYGON_HIDE_ZOOM = 8;
 map.on('zoom', function() {
   const z = map.getZoom();
 
-  // Fade state polygon borders when zoomed in close
-  const borderOpacity = z >= POLYGON_HIDE_ZOOM ? 0 : null;
-  if (borderOpacity !== null) {
+  // Fade state polygon borders when zoomed in close (only if no state is selected)
+  if (z >= POLYGON_HIDE_ZOOM && !currentState) {
     Object.values(statePolygons).forEach(p => p.setStyle({ opacity: 0, fillOpacity: 0 }));
   } else if (currentState) {
     // Restore selected-state styling
